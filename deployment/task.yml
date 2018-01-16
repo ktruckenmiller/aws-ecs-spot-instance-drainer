@@ -9,7 +9,7 @@ Resources:
     Type: "AWS::Logs::LogGroup"
     Properties:
       LogGroupName: spot-checker
-      RetentionInDays: 7
+      RetentionInDays: 1
 
   Task:
     Type: AWS::ECS::TaskDefinition
@@ -43,10 +43,6 @@ Resources:
                 - "ecs-tasks.amazonaws.com"
             Action:
               - "sts:AssumeRole"
-          - Effect: "Allow"
-            Principal:
-              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
-            Action: "sts:AssumeRole"
       Path: '/'
       Policies:
         - PolicyName: "ecs-stopper"
