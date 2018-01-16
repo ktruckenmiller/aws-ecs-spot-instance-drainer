@@ -7,7 +7,7 @@ This service will check the underlying spot instance within the cluster to autom
 `./deploy-service.sh <your-ecs-cluster-name>`
 
 
-
+### Legal Mumbo Jumbo
 
 MIT License
 
