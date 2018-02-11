@@ -14,6 +14,7 @@ Resources:
   Task:
     Type: AWS::ECS::TaskDefinition
     Properties:
+      Family: spot-checker
       TaskRoleArn: !Ref SpotCheckerRole
       NetworkMode: host
       ContainerDefinitions:
@@ -23,7 +24,8 @@ Resources:
           MemoryReservation: 20
           Environment:
             - Name: AWS_REGION
-              Value: !Sub "${AWS::Region}"
+              Value:
+                Fn::Sub: "${AWS::Region}"
           LogConfiguration:
             LogDriver: awslogs
             Options:
