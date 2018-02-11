@@ -23,12 +23,12 @@ Resources:
           MemoryReservation: 20
           Environment:
             - Name: AWS_REGION
-              Value: !Sub ${AWS::Region}
+              Value: !Sub "${AWS::Region}"
           LogConfiguration:
             LogDriver: awslogs
             Options:
               awslogs-group: spot-checker
-              awslogs-region: !Sub ${AWS::Region}
+              awslogs-region: !Sub "${AWS::Region}"
               awslogs-stream-prefix: spot-checker
 
   SpotCheckerRole:
