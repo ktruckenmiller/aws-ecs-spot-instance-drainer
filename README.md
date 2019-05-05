@@ -6,27 +6,10 @@ This service will check the underlying spot instance within the cluster to autom
 ## To deploy
 `./deploy-service.sh <your-ecs-cluster-name>`
 
+### A Word of Advice
 
-### Legal Mumbo Jumbo
+Instead of doing this, it would probably be better to listen to [CloudTrail API calls that are terminating the instances](https://aws.amazon.com/about-aws/whats-new/2016/09/aws-cloudtrail-now-records-amazon-ec2-spot-instances-launch-and-termination-events/) in the ECS cluster. You'd probably want to do this instead of running a service on your cluster, because it's less overhead. The only issue is the complexity in such a deploy. For every ECS cluster that you deploy with a spot fleet, you must tag the EC2 instances with the proper `cluster` identifier. On the ECS side, you'll set an ECS `attribute` instance id when the instance starts. This will logically link them together when you get an instance termination event from CloudTrail.
 
-MIT License
+With the CloudTrail lambda function draining the nodes, for every spot instance termination you're going to want to list the tags of the instance that's being terminated. It will then list the cluster on the tag. From the cluster name, you will then perform an ECS query that asks for the instance id in the ECS attribute. It will allow you to perform a DRAINING on that specific ECS instance.
 
-Copyright (c) 2018 Kevin Truckenmiller
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+That seems a lot more elegant as it is event based and non polling. The 2-3 API calls will be very fast and performant compared to the constant daemon service that needs to be running on your infrastructure.
